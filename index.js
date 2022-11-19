@@ -43,16 +43,12 @@ app.get("/getplants/:id", async (req, res) => {
       const diffTime = Math.abs(datetime - water_date);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       if (diffDays > plant.water_req) {
-        no_dry = no_dry + 1;
+        plant["dry"] = true;
       } else {
-        no_water = no_water + 1;
+        plant["dry"] = false;
       }
       plants.push(plant)
     });
-  for(var i=0;i<plants.length;i++){
-    plants[i]["no_watered"] = no_water
-    plants[i]["no_dry"] = no_dry
-  }
   if (plants.length == 0) {
     res.status(500).json({ err: "No document found!" });
   } else {
