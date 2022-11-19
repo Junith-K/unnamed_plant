@@ -56,7 +56,7 @@ app.get("/getplants/:id", async (req, res) => {
   }
 });
 
-app.patch("/updateplant/:id", (req, res) => {
+app.post("/updateplant/:id", (req, res) => {
   const updates = req.body;
 
   if (ObjectId.isValid(req.params.id)) {
