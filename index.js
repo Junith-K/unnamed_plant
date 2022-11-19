@@ -25,7 +25,10 @@ app.post("/addplant", async (req, res) => {
 
 app.get("/getplants", async (req, res) => {
   let plants = [];
-  await db.find().forEach((plant) => plants.push(plant));
+  await db.find().forEach((plant) => {
+    plant.set("nnn","sucesss")
+    plants.push(plant)
+  });
   res.status(200).json(plants);
 });
 
