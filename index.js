@@ -25,18 +25,34 @@ app.post("/addplant", async (req, res) => {
 
 app.get("/getplants", async (req, res) => {
   let plants = [];
-  await db.find().forEach((plant) => {
-    plant.set("nnn","sucesss")
-    plants.push(plant)
-  });
+  await db.find().forEach((plant) => plants.push(plant));
   res.status(200).json(plants);
 });
 
 app.get("/getplants/:id", async (req, res) => {
   let plants = [];
+  var datetime = new Date();
+  var no_water = 0;
+  var no_dry = 0;
   await db
     .find({ user_id: req.params.id })
-    .forEach((plant) => plants.push(plant));
+    .forEach((plant) => {
+
+      var parts = plant.water_date.split("-");
+      var water_date = new Date(parts[0], parts[1] - 1, parts[2]);
+      const diffTime = Math.abs(datetime - water_date);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      if (diffDays > plant.water_req) {
+        no_dry = no_dry + 1;
+      } else {
+        no_water = no_water + 1;
+      }
+      plants.push(plant)
+    });
+  for(var i=0;i<plants.length;i++){
+    plants[i]["no_watered"] = no_water
+    plants[i]["no_dry"] = no_dry
+  }
   if (plants.length == 0) {
     res.status(500).json({ err: "No document found!" });
   } else {
