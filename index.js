@@ -25,7 +25,20 @@ app.post("/addplant", async (req, res) => {
 
 app.get("/getplants", async (req, res) => {
   let plants = [];
-  await db.find().forEach((plant) => plants.push(plant));
+  var datetime = new Date();
+  var no_water = 0;
+  var no_dry = 0;
+  await db.find().forEach((plant) => {
+    var parts = plant.water_date.split("-");
+    var water_date = new Date(parts[0], parts[1] - 1, parts[2]);
+    const diffTime = Math.abs(datetime - water_date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays > plant.water_req) {
+      plant["dry"] = true;
+    } else {
+      plant["dry"] = false;
+    }
+    plants.push(plant)});
   res.status(200).json(plants);
 });
 
@@ -37,7 +50,6 @@ app.get("/getplants/:id", async (req, res) => {
   await db
     .find({ user_id: req.params.id })
     .forEach((plant) => {
-
       var parts = plant.water_date.split("-");
       var water_date = new Date(parts[0], parts[1] - 1, parts[2]);
       const diffTime = Math.abs(datetime - water_date);
