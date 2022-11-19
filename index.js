@@ -75,7 +75,7 @@ app.get("/getprofile/:id", async (req, res) => {
   });
 
   res
-    .status(500)
+    .status(200)
     .json({
       no_watered: no_water,
       no_dry: no_dry,
